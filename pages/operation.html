@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PQC Core Operations</title>
+    <link rel="stylesheet" href="../assets/css/algorithms/operation.css">
+</head>
+<body>
+    <div class="container">
+        <header class="main-header">
+            <h1>PQC Core Operations</h1>
+            <p>Post-Quantum Cryptography의 핵심 연산들을 실행하고 시각화합니다.</p>
+        </header>
+
+        <main class="operations-container">
+            <!-- Matrix Operations Section -->
+            <section class="operation-section" id="matrix-section">
+                <div class="section-header">
+                    <h2>Matrix Operations</h2>
+                    <div class="operation-description">
+                        격자 기반 암호에서 사용되는 행렬 연산을 수행합니다.
+                    </div>
+                </div>
+
+                <div class="operation-content">
+                    <div class="input-controls">
+                        <div class="matrix-dimensions">
+                            <label>
+                                행렬 A 크기:
+                                <div class="dimension-inputs">
+                                    <input type="number" id="matrixA-rows" min="1" max="8" value="2">
+                                    ×
+                                    <input type="number" id="matrixA-cols" min="1" max="8" value="2">
+                                </div>
+                            </label>
+                            <label>
+                                행렬 B 크기:
+                                <div class="dimension-inputs">
+                                    <input type="number" id="matrixB-rows" min="1" max="8" value="2">
+                                    ×
+                                    <input type="number" id="matrixB-cols" min="1" max="8" value="2">
+                                </div>
+                            </label>
+                        </div>
+                        <button id="generate-matrices" class="primary-button">행렬 생성</button>
+                    </div>
+
+                    <div class="matrices-container">
+                        <div class="matrix-workspace">
+                            <h3>행렬 A</h3>
+                            <div id="matrixA" class="matrix-grid"></div>
+                        </div>
+                        <div class="matrix-workspace">
+                            <h3>행렬 B</h3>
+                            <div id="matrixB" class="matrix-grid"></div>
+                        </div>
+                    </div>
+
+                    <div class="operation-buttons">
+                        <button id="matrix-multiply" class="action-button">곱셈</button>
+                        <button id="matrix-transpose" class="action-button">전치</button>
+                    </div>
+
+                    <div class="result-container">
+                        <h3>연산 결과</h3>
+                        <div id="matrix-result"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NTT Transform Section -->
+            <section class="operation-section" id="ntt-section">
+                <div class="section-header">
+                    <h2>NTT Transform</h2>
+                    <div class="operation-description">
+                        Number Theoretic Transform을 사용한 다항식 연산을 수행합니다.
+                    </div>
+                </div>
+
+                <div class="operation-content">
+                    <div class="input-controls">
+                        <div class="ntt-parameters">
+                            <label>
+                                차수 (N):
+                                <input type="number" id="ntt-degree" min="2" max="1024" step="2" value="8">
+                            </label>
+                            <label>
+                                모듈러스 (q):
+                                <input type="number" id="ntt-modulus" value="3329">
+                            </label>
+                        </div>
+                        <div class="polynomial-input">
+                            <label>
+                                다항식 계수 (공백으로 구분):
+                                <input type="text" id="polynomial-coeffs" placeholder="예: 1 2 3 4">
+                            </label>
+                        </div>
+                        <button id="perform-ntt" class="action-button">NTT 변환</button>
+                    </div>
+
+                    <div class="result-container">
+                        <h3>변환 결과</h3>
+                        <div id="ntt-visualization"></div>
+                        <div id="ntt-result"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sampling Section -->
+            <section class="operation-section" id="sampling-section">
+                <div class="section-header">
+                    <h2>Sampling</h2>
+                    <div class="operation-description">
+                        다양한 확률 분포에 따른 난수 샘플링을 수행합니다.
+                    </div>
+                </div>
+
+                <div class="operation-content">
+                    <div class="input-controls">
+                        <div class="sampling-parameters">
+                            <label>
+                                분포 유형:
+                                <select id="distribution-type">
+                                    <option value="uniform">균일 분포</option>
+                                    <option value="gaussian">가우시안 분포</option>
+                                    <option value="binomial">이항 분포</option>
+                                </select>
+                            </label>
+                            <label>
+                                샘플 수:
+                                <input type="number" id="sample-count" min="10" max="1000" value="100">
+                            </label>
+                        </div>
+                        <div id="distribution-params" class="distribution-params">
+                            <!-- 동적으로 추가될 파라미터 입력 필드 -->
+                        </div>
+                        <button id="generate-samples" class="action-button">샘플 생성</button>
+                    </div>
+
+                    <div class="result-container">
+                        <h3>샘플링 결과</h3>
+                        <div id="sampling-visualization"></div>
+                        <div id="sampling-stats"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="../assets/js/operation.js"></script>
+</body>
+</html>

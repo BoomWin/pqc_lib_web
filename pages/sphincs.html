@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPHINCS+ - PQC Implementation</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/navigation.css">
+    <link rel="stylesheet" href="../assets/css/algorithms/sphincs.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar glass-card">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-logo">
+                <i class="fas fa-shield-alt"></i> PQC Lab
+            </a>
+            <button class="nav-toggle" aria-label="toggle navigation">
+                <span class="hamburger"></span>
+            </button>
+            <div class="nav-menu">
+                <a href="kyber.html" class="nav-link">
+                    <i class="fas fa-key"></i> Kyber
+                </a>
+                <a href="dilithium.html" class="nav-link">
+                    <i class="fas fa-signature"></i> Dilithium
+                </a>
+                <a href="sphincs.html" class="nav-link active">
+                    <i class="fas fa-tree"></i> SPHINCS+
+                </a>
+                <a href="falcon.html" class="nav-link">
+                    <i class="fas fa-feather"></i> FALCON
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="algorithm-header glass-card">
+            <h1>SPHINCS+ Implementation</h1>
+            <p>Stateless Hash-based Signature Scheme</p>
+            <div class="algorithm-info">
+                <span class="info-badge">
+                    <i class="fas fa-shield-alt"></i> Post-Quantum Secure
+                </span>
+                <span class="info-badge">
+                    <i class="fas fa-hashtag"></i> Hash-Based
+                </span>
+                <span class="info-badge">
+                    <i class="fas fa-infinity"></i> Stateless
+                </span>
+            </div>
+        </header>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-cogs"></i> Configuration</h2>
+            <div class="hash-selector">
+                <div class="hash-option" onclick="selectHash('sha256')" id="sha256-option">
+                    <i class="fas fa-hashtag"></i>
+                    <h3>SHA-256</h3>
+                    <p>Robust and Widely Used</p>
+                </div>
+                <div class="hash-option" onclick="selectHash('shake256')" id="shake256-option">
+                    <i class="fas fa-hashtag"></i>
+                    <h3>SHAKE256</h3>
+                    <p>Variable Output Length</p>
+                </div>
+                <div class="hash-option" onclick="selectHash('haraka')" id="haraka-option">
+                    <i class="fas fa-hashtag"></i>
+                    <h3>Haraka</h3>
+                    <p>Optimized for Short Inputs</p>
+                </div>
+            </div>
+
+            <div class="parameter-grid">
+                <div class="parameter-item">
+                    <h4>Security Level</h4>
+                    <select id="security-level" class="form-input" onchange="updateParameters()">
+                        <option value="128">Level 1 (128-bit)</option>
+                        <option value="192">Level 3 (192-bit)</option>
+                        <option value="256">Level 5 (256-bit)</option>
+                    </select>
+                </div>
+                <div class="parameter-item">
+                    <h4>Tree Height</h4>
+                    <select id="tree-height" class="form-input" onchange="updateVisualization()">
+                        <option value="60">h = 60 (Balanced)</option>
+                        <option value="63">h = 63 (Optimized)</option>
+                        <option value="66">h = 66 (Extended)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-key"></i> Key Generation</h2>
+            <button class="btn" onclick="generateKeys()">
+                <i class="fas fa-sync"></i> Generate Key Pair
+            </button>
+            <div class="output-section" id="keygen-output">
+                <div class="key-display">
+                    <h3>Generated Keys</h3>
+                    <div class="key-section">
+                        <h4>Public Key</h4>
+                        <pre id="public-key" class="key-text">Waiting for generation...</pre>
+                    </div>
+                    <div class="key-section">
+                        <h4>Private Key</h4>
+                        <pre id="private-key" class="key-text">Waiting for generation...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-signature"></i> Sign Message</h2>
+            <div class="input-section">
+                <div class="form-group">
+                    <label>Message Input</label>
+                    <textarea id="message-input" class="message-input" placeholder="Enter your message here..."></textarea>
+                </div>
+                <div class="file-upload">
+                    <label class="file-upload-label">
+                        <i class="fas fa-file-upload"></i>
+                        <span>Or drop a file here</span>
+                        <input type="file" id="file-input" style="display: none;">
+                    </label>
+                </div>
+                <button class="btn" onclick="signMessage()">
+                    <i class="fas fa-pen-fancy"></i> Generate Signature
+                </button>
+            </div>
+            <div class="output-section" id="signature-output">
+                <h3>Generated Signature</h3>
+                <pre id="signature" class="signature-text">Waiting for signature...</pre>
+                <div class="signature-info">
+                    <div class="info-card">
+                        <div class="label">Signature Size</div>
+                        <div class="value" id="signature-size">-</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="label">Generation Time</div>
+                        <div class="value" id="generation-time">-</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="label">Tree Layers Used</div>
+                        <div class="value" id="tree-layers">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-check-circle"></i> Verify Signature</h2>
+            <div class="input-section">
+                <div class="form-group">
+                    <label>Public Key</label>
+                    <input type="text" id="verify-public-key" class="form-input" placeholder="Enter public key">
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea id="verify-message" class="message-input" placeholder="Enter the original message"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Signature</label>
+                    <textarea id="verify-signature" class="message-input" placeholder="Enter the signature"></textarea>
+                </div>
+                <button class="btn" onclick="verifySignature()">
+                    <i class="fas fa-check"></i> Verify Signature
+                </button>
+            </div>
+            <div id="verification-result"></div>
+        </div>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-tree"></i> Merkle Tree Visualization</h2>
+            <div class="tree-visualization" id="merkle-tree">
+                <!-- Tree visualization will be rendered here -->
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.0.0/d3.min.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/wasm-loader.js"></script>
+    <script src="../assets/js/algorithms/sphincs.js"></script>
+</body>
+</html>

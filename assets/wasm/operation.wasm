@@ -1,0 +1,134 @@
+#include <emscripten.h>
+#include <stdlib.h>
+#include <math.h>
+
+// Matrix Operations
+EMSCRIPTEN_KEEPALIVE
+void matrix_multiply(int* matrixA, int* matrixB, int* result, int rowsA, int colsA, int colsB) {
+    for (int i = 0; i < rowsA; i++) {
+        for (int j = 0; j < colsB; j++) {
+            int sum = 0;
+            for (int k = 0; k < colsA; k++) {
+                sum += matrixA[i * colsA + k] * matrixB[k * colsB + j];
+            }
+            result[i * colsB + j] = sum;
+        }
+    }
+}
+
+// NTT Operations
+#define MAX_N 1024
+
+static int mod_pow(int base, int exp, int modulus) {
+    int result = 1;
+    base %= modulus;
+    while (exp > 0) {
+        if (exp & 1)
+            result = (result * base) % modulus;
+        base = (base * base) % modulus;
+        exp >>= 1;
+    }
+    return result;
+}
+
+static int find_primitive_root(int modulus) {
+    // Simple implementation for testing
+    // In practice, need more robust implementation
+    return 3;
+}
+
+EMSCRIPTEN_KEEPALIVE
+void ntt_transform(int* input, int* output, int n, int modulus) {
+    int root = find_primitive_root(modulus);
+    int omega = mod_pow(root, (modulus - 1) / n, modulus);
+    
+    // Bit-reversal permutation
+    for (int i = 0; i < n; i++) {
+        int rev = 0;
+        for (int j = 0; j < (int)log2(n); j++) {
+            rev = (rev << 1) | ((i >> j) & 1);
+        }
+        if (i < rev) {
+            int temp = input[i];
+            input[i] = input[rev];
+            input[rev] = temp;
+        }
+    }
+    
+    // NTT computation
+    for (int len = 2; len <= n; len <<= 1) {
+        int wlen = mod_pow(omega, n / len, modulus);
+        for (int i = 0; i < n; i += len) {
+            int w = 1;
+            for (int j = 0; j < len/2; j++) {
+                int u = input[i + j];
+                int v = (int)((long long)input[i + j + len/2] * w % modulus);
+                input[i + j] = (u + v) % modulus;
+                input[i + j + len/2] = (u - v + modulus) % modulus;
+                w = (int)((long long)w * wlen % modulus);
+            }
+        }
+    }
+    
+    for (int i = 0; i < n; i++) {
+        output[i] = input[i];
+    }
+}
+
+EMSCRIPTEN_KEEPALIVE
+void intt_transform(int* input, int* output, int n, int modulus) {
+    // Inverse NTT is similar to forward NTT with different omega
+    int root = find_primitive_root(modulus);
+    int omega_inv = mod_pow(mod_pow(root, (modulus - 1) / n, modulus), modulus - 2, modulus);
+    
+    ntt_transform(input, output, n, modulus);
+    
+    // Scale by n^(-1)
+    int n_inv = mod_pow(n, modulus - 2, modulus);
+    for (int i = 0; i < n; i++) {
+        output[i] = (int)((long long)output[i] * n_inv % modulus);
+    }
+}
+
+// Sampling Operations
+EMSCRIPTEN_KEEPALIVE
+void uniform_sampling(int* output, int count, int min, int max) {
+    for (int i = 0; i < count; i++) {
+        output[i] = min + (rand() % (max - min + 1));
+    }
+}
+
+EMSCRIPTEN_KEEPALIVE
+void gaussian_sampling(int* output, int count, double mean, double stddev) {
+    for (int i = 0; i < count; i++) {
+        // Box-Muller transform
+        double u1 = (double)rand() / RAND_MAX;
+        double u2 = (double)rand() / RAND_MAX;
+        double z = sqrt(-2.0 * log(u1)) * cos(2.0 * M_PI * u2);
+        output[i] = (int)(mean + stddev * z);
+    }
+}
+
+EMSCRIPTEN_KEEPALIVE
+void binomial_sampling(int* output, int count, int n, double p) {
+    for (int i = 0; i < count; i++) {
+        int successes = 0;
+        for (int j = 0; j < n; j++) {
+            if ((double)rand() / RAND_MAX < p) {
+                successes++;
+            }
+        }
+        output[i] = successes;
+    }
+}
+
+// Memory management functions
+EMSCRIPTEN_KEEPALIVE
+void* malloc_wrapper(size_t size) {
+    return malloc(size);
+}
+
+EMSCRIPTEN_KEEPALIVE
+void free_wrapper(void* ptr) {
+    free(ptr);
+}

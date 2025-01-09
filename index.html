@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PQC Algorithm Implementation</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/navigation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar glass-card">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-shield-alt"></i> IoT Lab
+            </a>
+            <button class="nav-toggle" aria-label="toggle navigation">
+                <span class="hamburger"></span>
+            </button>
+            <div class="nav-menu">
+                <a href="pages/kyber.html" class="nav-link">
+                    <i class="fas fa-key"></i> Kyber
+                </a>
+                <a href="pages/dilithium.html" class="nav-link">
+                    <i class="fas fa-signature"></i> Dilithium
+                </a>
+                <a href="pages/sphincs.html" class="nav-link">
+                    <i class="fas fa-tree"></i> SPHINCS+
+                </a>
+                <a href="pages/falcon.html" class="nav-link">
+                    <i class="fas fa-feather"></i> FALCON
+                </a>
+                <a href="#operations" class="nav-link">
+                    <i class="fas fa-cogs"></i> Core Operations
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="main-header glass-card">
+            <h1>Post-Quantum Cryptography Library Website</h1>
+            <p>각 암호들이 제공하는 기능을 웹사이트로 제공할 수 있다.</p>
+        </header>
+
+        <div class="grid">
+            <div class="glass-card card">
+                <h2><i class="fas fa-key"></i> Kyber</h2>
+                <p> 격자 기반 키 캡슐화 메커니즘</p>
+                <div class="btn-group">
+                    <a href="pages/kyber.html" class="btn">Function Kyber <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <div class="glass-card card">
+                <h2><i class="fas fa-signature"></i> Dilithium</h2>
+                <p>격자 기반 디지털 서명 방식</p>
+                <div class="btn-group">
+                    <a href="pages/dilithium.html" class="btn">Function Dilithium <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <div class="glass-card card">
+                <h2><i class="fas fa-tree"></i> SPHINCS+</h2>
+                <p>해시 기반 서명 방식</p>
+                <div class="btn-group">
+                    <a href="pages/sphincs.html" class="btn">Function SPHINCS+ <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <div class="glass-card card">
+                <h2><i class="fas fa-feather"></i> FALCON</h2>
+                <p>격자 기반 서명 방식 (특수 환경)</p>
+                <div class="btn-group">
+                    <a href="pages/falcon.html" class="btn">Function FALCON <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <section id="operations" class="glass-card">
+            <h2>Core Operations</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3><i class="fas fa-calculator"></i> Matrix Operations</h3>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-wave-square"></i> NTT Transform</h3>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-random"></i> Sampling</h3>
+                </div>
+            </div>
+            <div class = "operation_btn">
+                <a href  = "pages/operation.html" class="btn">Open Calculator</button></a>
+            </div>
+        </section>
+    </main>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/wasm-loader.js"></script>
+</body>
+</html>
