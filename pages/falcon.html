@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FALCON - PQC Implementation</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/navigation.css">
+    <link rel="stylesheet" href="../assets/css/algorithms/falcon.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar glass-card">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-logo">
+                <i class="fas fa-shield-alt"></i> PQC Lab
+            </a>
+            <button class="nav-toggle" aria-label="toggle navigation">
+                <span class="hamburger"></span>
+            </button>
+            <div class="nav-menu">
+                <a href="kyber.html" class="nav-link">
+                    <i class="fas fa-key"></i> Kyber
+                </a>
+                <a href="dilithium.html" class="nav-link">
+                    <i class="fas fa-signature"></i> Dilithium
+                </a>
+                <a href="sphincs.html" class="nav-link">
+                    <i class="fas fa-tree"></i> SPHINCS+
+                </a>
+                <a href="falcon.html" class="nav-link active">
+                    <i class="fas fa-feather"></i> FALCON
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="algorithm-header glass-card">
+            <h1>FALCON Implementation</h1>
+            <p>Fast-Fourier Lattice-based Compact Signatures</p>
+            <div class="algorithm-info">
+                <span class="info-badge">
+                    <i class="fas fa-shield-alt"></i> Post-Quantum Secure
+                </span>
+                <span class="info-badge">
+                    <i class="fas fa-microchip"></i> Lattice-Based
+                </span>
+                <span class="info-badge">
+                    <i class="fas fa-compress-alt"></i> Compact Signatures
+                </span>
+            </div>
+        </header>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-cogs"></i> Configuration</h2>
+            <div class="mode-selector">
+                <div class="mode-option active" onclick="selectMode('normal')" id="normal-mode">
+                    <i class="fas fa-feather"></i>
+                    <h3>Normal Mode</h3>
+                    <p>Standard FALCON implementation</p>
+                </div>
+                <div class="mode-option" onclick="selectMode('compressed')" id="compressed-mode">
+                    <i class="fas fa-compress-alt"></i>
+                    <h3>Compressed Mode</h3>
+                    <p>Reduced signature size</p>
+                </div>
+                <div class="mode-option" onclick="selectMode('ct')" id="ct-mode">
+                    <i class="fas fa-clock"></i>
+                    <h3>Constant-Time</h3>
+                    <p>Side-channel resistant</p>
+                </div>
+            </div>
+
+            <div class="parameter-section">
+                <h3>Current Parameters</h3>
+                <div class="parameter-grid">
+                    <div class="parameter-card">
+                        <h4>Degree (n)</h4>
+                        <select id="degree-select" class="form-input" onchange="updateParameters()">
+                            <option value="512">512 (Level 1)</option>
+                            <option value="1024">1024 (Level 5)</option>
+                        </select>
+                    </div>
+                    <div class="parameter-card">
+                        <h4>Modulus (q)</h4>
+                        <div class="parameter-value" id="modulus-value">12289</div>
+                    </div>
+                    <div class="parameter-card">
+                        <h4>Security Level</h4>
+                        <div class="parameter-value" id="security-level">128-bit</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-key"></i> Key Generation</h2>
+            <div class="input-section">
+                <button class="btn" onclick="generateKeys()">
+                    <i class="fas fa-sync"></i> Generate Key Pair
+                </button>
+            </div>
+            <div class="output-section" id="keygen-output">
+                <h3>Generated Keys</h3>
+                <div class="key-display">
+                    <div class="key-section">
+                        <h4>Public Key</h4>
+                        <pre id="public-key" class="key-text">Waiting for generation...</pre>
+                    </div>
+                    <div class="key-section">
+                        <h4>Private Key</h4>
+                        <pre id="private-key" class="key-text">Waiting for generation...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-signature"></i> Sign Message</h2>
+            <div class="input-section">
+                <div class="form-group">
+                    <label>Private Key</label>
+                    <input type="text" id="sign-private-key" class="form-input" placeholder="Enter or paste private key">
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea id="message" class="message-input" placeholder="Enter your message here"></textarea>
+                </div>
+                <div class="file-upload">
+                    <div class="file-input-wrapper">
+                        <label class="file-upload-label">
+                            <i class="fas fa-file-upload"></i>
+                            <span>Drop file here or click to upload</span>
+                            <input type="file" id="file-input" hidden>
+                        </label>
+                    </div>
+                </div>
+                <button class="btn" onclick="signMessage()">
+                    <i class="fas fa-pen-fancy"></i> Generate Signature
+                </button>
+            </div>
+            <div class="output-section" id="signature-output">
+                <h3>Generated Signature</h3>
+                <pre id="signature" class="signature-text">Waiting for signature generation...</pre>
+                <div class="signature-info">
+                    <div class="info-card">
+                        <div class="label">Signature Size</div>
+                        <div class="value" id="signature-size">-</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="label">Generation Time</div>
+                        <div class="value" id="generation-time">-</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="label">Compression Rate</div>
+                        <div class="value" id="compression-rate">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-check-circle"></i> Verify Signature</h2>
+            <div class="input-section">
+                <div class="form-group">
+                    <label>Public Key</label>
+                    <input type="text" id="verify-public-key" class="form-input" placeholder="Enter public key">
+                </div>
+                <div class="form-group">
+                    <label>Original Message</label>
+                    <textarea id="verify-message" class="message-input" placeholder="Enter the original message"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Signature</label>
+                    <textarea id="verify-signature" class="message-input" placeholder="Enter the signature to verify"></textarea>
+                </div>
+                <button class="btn" onclick="verifySignature()">
+                    <i class="fas fa-check"></i> Verify Signature
+                </button>
+            </div>
+            <div class="output-section" id="verify-output">
+                <div id="verification-result"></div>
+            </div>
+        </div>
+
+        <div class="visualization-section glass-card">
+            <h2><i class="fas fa-chart-scatter"></i> Lattice Visualization</h2>
+            <p>Visualization of the underlying lattice structure</p>
+            <div class="visualization-container" id="lattice-visualization"></div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.0.0/d3.min.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/wasm-loader.js"></script>
+    <script src="../assets/js/algorithms/falcon.js"></script>
+</body>
+</html>

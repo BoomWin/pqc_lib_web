@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kyber - PQC Implementation</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/navigation.css">
+    <link rel="stylesheet" href="../assets/css/algorithms/kyber.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar glass-card">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-logo">
+                <i class="fas fa-shield-alt"></i> PQC Lab
+            </a>
+            <button class="nav-toggle" aria-label="toggle navigation">
+                <span class="hamburger"></span>
+            </button>
+            <div class="nav-menu">
+                <a href="kyber.html" class="nav-link active">
+                    <i class="fas fa-key"></i> Kyber
+                </a>
+                <a href="dilithium.html" class="nav-link">
+                    <i class="fas fa-signature"></i> Dilithium
+                </a>
+                <a href="sphincs.html" class="nav-link">
+                    <i class="fas fa-tree"></i> SPHINCS+
+                </a>
+                <a href="falcon.html" class="nav-link">
+                    <i class="fas fa-feather"></i> FALCON
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="algorithm-header glass-card">
+            <h1>Kyber Implementation</h1>
+            <p>Lattice-based Key Encapsulation Mechanism</p>
+            <div class="algorithm-info">
+                <span class="info-badge">
+                    <i class="fas fa-shield-alt"></i> Post-Quantum Secure
+                </span>
+                <span class="info-badge">
+                    <i class="fas fa-microchip"></i> Lattice-Based
+                </span>
+                <span class="info-badge">
+                    <i class="fas fa-lock"></i> IND-CCA2 Secure
+                </span>
+            </div>
+        </header>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-key"></i> Key Generation</h2>
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="security-level">Security Level</label>
+                    <select id="security-level">
+                        <option value="kyber512">Kyber512 (Level 1)</option>
+                        <option value="kyber768">Kyber768 (Level 3)</option>
+                        <option value="kyber1024">Kyber1024 (Level 5)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="seed">Random Seed (optional)</label>
+                    <input type="text" id="seed" placeholder="Leave empty for random generation">
+                </div>
+                <button class="btn" onclick="generateKeys()">
+                    <i class="fas fa-cog"></i> Generate Key Pair
+                </button>
+            </div>
+            <div class="output-section" id="keygen-output">
+                <h3>Generated Keys</h3>
+                <div class="key-display">
+                    <div class="key-section">
+                        <h4>Public Key</h4>
+                        <pre id="public-key">Waiting for generation...</pre>
+                    </div>
+                    <div class="key-section">
+                        <h4>Private Key</h4>
+                        <pre id="private-key">Waiting for generation...</pre>
+                    </div>
+                </div>
+                <div id="keygen-status"></div>
+            </div>
+        </div>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-lock"></i> Encapsulation</h2>
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="encap-public-key">Public Key</label>
+                    <input type="text" id="encap-public-key" placeholder="Enter or paste public key">
+                </div>
+                <button class="btn" onclick="encapsulate()">
+                    <i class="fas fa-lock"></i> Generate Shared Secret
+                </button>
+            </div>
+            <div class="output-section" id="encap-output">
+                <h3>Encapsulation Result</h3>
+                <div class="result-section">
+                    <h4>Ciphertext</h4>
+                    <pre id="ciphertext">Waiting for encapsulation...</pre>
+                </div>
+                <div class="result-section">
+                    <h4>Shared Secret</h4>
+                    <pre id="shared-secret-encap">Waiting for encapsulation...</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-unlock"></i> Decapsulation</h2>
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="decap-private-key">Private Key</label>
+                    <input type="text" id="decap-private-key" placeholder="Enter or paste private key">
+                </div>
+                <div class="input-group">
+                    <label for="decap-ciphertext">Ciphertext</label>
+                    <input type="text" id="decap-ciphertext" placeholder="Enter or paste ciphertext">
+                </div>
+                <button class="btn" onclick="decapsulate()">
+                    <i class="fas fa-unlock"></i> Recover Shared Secret
+                </button>
+            </div>
+            <div class="output-section" id="decap-output">
+                <h3>Decapsulation Result</h3>
+                <div class="result-section">
+                    <h4>Recovered Shared Secret</h4>
+                    <pre id="shared-secret-decap">Waiting for decapsulation...</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-info-circle"></i> Parameters Info</h2>
+            <div class="parameter-info">
+                <h4>Current Security Parameters:</h4>
+                <ul id="parameter-list">
+                    <li>Module Dimension (n): <span id="param-n">256</span></li>
+                    <li>Module Rank (k): <span id="param-k">2</span></li>
+                    <li>Modulus (q): <span id="param-q">3329</span></li>
+                    <li>η: <span id="param-eta">2</span></li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/wasm-loader.js"></script>
+    <script src="../assets/js/algorithms/kyber.js"></script>
+</body>
+</html>

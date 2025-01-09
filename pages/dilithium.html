@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dilithium - PQC Implementation</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/navigation.css">
+    <link rel="stylesheet" href="../assets/css/algorithms/dilithium.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar glass-card">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-logo">
+                <i class="fas fa-shield-alt"></i> IoT Lab
+            </a>
+            <button class="nav-toggle" aria-label="toggle navigation">
+                <span class="hamburger"></span>
+            </button>
+            <div class="nav-menu">
+                <a href="kyber.html" class="nav-link">
+                    <i class="fas fa-key"></i> Kyber
+                </a>
+                <a href="dilithium.html" class="nav-link active">
+                    <i class="fas fa-signature"></i> Dilithium
+                </a>
+                <a href="sphincs.html" class="nav-link">
+                    <i class="fas fa-tree"></i> SPHINCS+
+                </a>
+                <a href="falcon.html" class="nav-link">
+                    <i class="fas fa-feather"></i> FALCON
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="algorithm-header glass-card">
+            <h1>Dilithium Implementation</h1>
+            <p>Lattice-based Digital Signature Scheme</p>
+            <div class="algorithm-info">
+                <span class="info-badge">
+                    <i class="fas fa-shield-alt"></i> Post-Quantum Secure
+                </span>
+                <span class="info-badge">
+                    <i class="fas fa-microchip"></i> Lattice-Based
+                </span>
+                <span class="info-badge">
+                    <i class="fas fa-check-double"></i> EUF-CMA Secure
+                </span>
+            </div>
+        </header>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-key"></i> Key Generation</h2>
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="security-level">Security Level</label>
+                    <select id="security-level">
+                        <option value="dilithium2">Dilithium2 (NIST Level 2)</option>
+                        <option value="dilithium3">Dilithium3 (NIST Level 3)</option>
+                        <option value="dilithium5">Dilithium5 (NIST Level 5)</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="generateKeys()">
+                    <i class="fas fa-cog"></i> Generate Key Pair
+                </button>
+            </div>
+            <div class="output-section" id="keygen-output">
+                <h3>Generated Keys</h3>
+                <div class="key-display">
+                    <div class="key-section">
+                        <h4>Public Key <button class="copy-button" onclick="copyToClipboard('public-key')">
+                            <i class="fas fa-copy"></i>
+                        </button></h4>
+                        <pre id="public-key" class="signature-display">Waiting for generation...</pre>
+                    </div>
+                    <div class="key-section">
+                        <h4>Private Key <button class="copy-button" onclick="copyToClipboard('private-key')">
+                            <i class="fas fa-copy"></i>
+                        </button></h4>
+                        <pre id="private-key" class="signature-display">Waiting for generation...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-file-signature"></i> Sign Message</h2>
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="private-key-sign">Private Key</label>
+                    <input type="text" id="private-key-sign" placeholder="Enter or paste private key">
+                </div>
+                <div class="input-group">
+                    <label>Message Input Method</label>
+                    <div class="input-toggle">
+                        <button class="btn" onclick="toggleInputMethod('text')" id="text-input-btn">Text Input</button>
+                        <button class="btn" onclick="toggleInputMethod('file')" id="file-input-btn">File Input</button>
+                    </div>
+                </div>
+                <div id="text-input-section">
+                    <label for="message">Message to Sign</label>
+                    <textarea id="message" class="message-input" placeholder="Enter your message here"></textarea>
+                </div>
+                <div id="file-input-section" style="display: none;">
+                    <div class="file-input-container">
+                        <label class="file-input-label">
+                            <i class="fas fa-file-upload"></i>
+                            <span>Choose file to sign</span>
+                            <input type="file" id="file-input" class="file-input">
+                        </label>
+                    </div>
+                </div>
+                <button class="btn" onclick="signMessage()">
+                    <i class="fas fa-signature"></i> Generate Signature
+                </button>
+            </div>
+            <div class="output-section" id="signature-output">
+                <h3>Generated Signature</h3>
+                <pre id="signature" class="signature-display">Waiting for signature generation...</pre>
+                <div class="signature-info">
+                    <div class="signature-info-item">
+                        <div class="label">Signature Size</div>
+                        <div class="value" id="signature-size">-</div>
+                    </div>
+                    <div class="signature-info-item">
+                        <div class="label">Generation Time</div>
+                        <div class="value" id="signature-time">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-check-circle"></i> Verify Signature</h2>
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="public-key-verify">Public Key</label>
+                    <input type="text" id="public-key-verify" placeholder="Enter or paste public key">
+                </div>
+                <div class="input-group">
+                    <label for="verify-message">Original Message</label>
+                    <textarea id="verify-message" class="message-input" placeholder="Enter the original message"></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="verify-signature">Signature</label>
+                    <textarea id="verify-signature" class="message-input" placeholder="Enter the signature to verify"></textarea>
+                </div>
+                <button class="btn" onclick="verifySignature()">
+                    <i class="fas fa-check"></i> Verify Signature
+                </button>
+            </div>
+            <div class="output-section" id="verify-output">
+                <div id="verification-result"></div>
+            </div>
+        </div>
+
+        <div class="operation-section glass-card">
+            <h2><i class="fas fa-info-circle"></i> Parameters Info</h2>
+            <div class="parameter-info">
+                <h4>Current Security Parameters:</h4>
+                <table class="parameter-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Value</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="parameter-list">
+                        <tr class="parameter-row">
+                            <td>n</td>
+                            <td id="param-n">256</td>
+                            <td>Polynomial degree</td>
+                        </tr>
+                        <tr class="parameter-row">
+                            <td>q</td>
+                            <td id="param-q">8380417</td>
+                            <td>Modulus</td>
+                        </tr>
+                        <tr class="parameter-row">
+                            <td>d</td>
+                            <td id="param-d">13</td>
+                            <td>Dropped bits in hint</td>
+                        </tr>
+                        <tr class="parameter-row">
+                            <td>τ</td>
+                            <td id="param-tau">39</td>
+                            <td>Number of ±1's in challenge</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/wasm-loader.js"></script>
+    <script src="../assets/js/algorithms/dilithium.js"></script>
+</body>
+</html>
