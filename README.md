@@ -1,6 +1,7 @@
 # 양자내성암호(PQC) 웹 구현 프로젝트
 
 양자내성암호(Post-Quantum Cryptography, PQC) 알고리즘을 웹 환경에서 구현한 프로젝트입니다. C언어로 구현된 암호화 라이브러리를 WebAssembly를 통해 웹 브라우저에서 직접 실행할 수 있도록 구현하였습니다.
+(I'm still working on the c library)
 
 ![image](https://github.com/user-attachments/assets/0955642f-ea19-48f1-bb23-dfa775951caf)
 
